@@ -2,6 +2,7 @@ import { Injectable, ForbiddenException, NotFoundException, BadRequestException 
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProviderProfileDto } from './dto/create-provider-profile.dto';
 import { Decimal } from '@prisma/client/runtime/library';
+import { UpdateProviderProfileDto } from './dto/update-provider-profile.dto';
 
 @Injectable()
 export class ProviderProfileService {
@@ -42,6 +43,46 @@ export class ProviderProfileService {
     if (!profile) throw new NotFoundException('Profile not found');
     return this.convertBigIntToString(profile);
   }
-  
-  // You can later add update/delete if needed
+
+  async update(userId: bigint, dto: UpdateProviderProfileDto) {
+  const profile = await this.prisma.providerProfile.findUnique({ where: { userId } });
+  if (!profile) throw new NotFoundException('Profile not found');
+
+  const user = await this.prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new NotFoundException('User not found');
+
+  if (user.role !== 'PROVIDER' && user.role !== 'ADMIN') {
+    throw new ForbiddenException('Access denied');
+  }
+
+  if (user.role !== 'ADMIN' && profile.userId !== userId) {
+    throw new ForbiddenException('You can only update your own profile');
+  }
+
+  const updated = await this.prisma.providerProfile.update({
+    where: { userId },
+    data: { ...dto },
+  });
+
+  return updated;
+}
+
+async delete(userId: bigint, targetUserId: bigint) {
+  const profile = await this.prisma.providerProfile.findUnique({ where: { userId: targetUserId } });
+  if (!profile) throw new NotFoundException('Profile not found');
+
+  const user = await this.prisma.user.findUnique({ where: { id: userId } });
+  if (!user) throw new NotFoundException('User not found');
+
+  // Check permissions
+  if (user.role !== 'ADMIN' && userId !== targetUserId) {
+    throw new ForbiddenException('You can only delete your own profile');
+  }
+
+  await this.prisma.providerProfile.delete({ where: { userId: targetUserId } });
+
+  return { message: 'Profile deleted successfully' };
+}
+
+
 }
