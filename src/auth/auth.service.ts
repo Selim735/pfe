@@ -148,7 +148,7 @@ export class AuthService {
         email: user.email
       },
       {
-        secret: this.configService.get<string>('JWT_SECRET_KEY'),
+        secret: this.configService.get<string>('JWT_SECRET'), // ✅ بدل JWT_SECRET_KEY
         expiresIn: '1d', // Shorter expiration
       }
     );
