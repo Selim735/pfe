@@ -1,4 +1,11 @@
-import { IsString, IsOptional, IsEmail, IsUrl, IsLatitude, IsLongitude } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsEmail,
+  IsUrl,
+  IsLatitude,
+  IsLongitude,
+} from 'class-validator';
 
 export class CreateProviderProfileDto {
   @IsString()
@@ -39,4 +46,6 @@ export class CreateProviderProfileDto {
   @IsOptional()
   @IsUrl()
   businessWebsite?: string;
+
+  // 🔒 userId is not accepted from the client. It is extracted from JWT on the server side.
 }

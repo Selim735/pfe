@@ -19,7 +19,7 @@ export class MailService {
 
   async sendResetPasswordEmail(to: string, token: string): Promise<void> {
     try {
-      const resetLink = `http://localhost:3000/reset-password?token=${token}`;
+      const resetLink = `http://localhost:3000/auth/reset-password?token=${token}`;
       
       const mailOptions = {
         from: process.env.GMAIL_USER,

@@ -6,9 +6,10 @@ import { PrismaService } from './prisma/prisma.service';
 import { MailService } from './mail/mail.service';
 import { ProviderProfileModule } from './provider-profile/provider-profile.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
-  imports: [AuthModule, ProviderProfileModule, PrismaModule],
+  imports: [AuthModule, ProviderProfileModule, PrismaModule, CategoryModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, MailService],
 })
