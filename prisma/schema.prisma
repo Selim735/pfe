@@ -8,47 +8,48 @@ datasource db {
 }
 
 model User {
-  id                            BigInt    @id @default(autoincrement())
-  email                         String    @unique
-  passwordHash                  String
-  firstName                     String
-  lastName                      String
-  phone                         String?   
-  avatarUrl                     String?   
-  role                          Role      @default(USER)
-  emailVerified                 Boolean   @default(false)
-  verificationToken             String?   
-  verificationTokenExpiresAt    DateTime? 
-  resetPasswordToken            String?   
-  resetPasswordTokenExpiresAt   DateTime? 
-  createdAt                     DateTime  @default(now())
-  updatedAt                     DateTime  @updatedAt
-  lastLoginAt                   DateTime?
-  isActive                      Boolean   @default(true)
+  id                          BigInt    @id @default(autoincrement())
+  email                       String    @unique
+  passwordHash                String
+  firstName                   String
+  lastName                    String
+  phone                       String?
+  avatarUrl                   String?
+  role                        Role      @default(USER)
+  emailVerified               Boolean   @default(false)
+  verificationToken           String?
+  verificationTokenExpiresAt  DateTime?
+  resetPasswordToken          String?
+  resetPasswordTokenExpiresAt DateTime?
+  createdAt                   DateTime  @default(now())
+  updatedAt                   DateTime  @updatedAt
+  lastLoginAt                 DateTime?
+  isActive                    Boolean   @default(true)
 
-  providerProfile               ProviderProfile?
+  providerProfile ProviderProfile?
 
   @@map("users")
 }
 
 model ProviderProfile {
-  id                          BigInt     @id @default(autoincrement())
-  userId                      BigInt     @unique
-  businessName                String
-  businessDescription         String?
-  businessLogoUrl             String?
-  businessLicenseNumber       String?
-  businessLicenseVerified     Boolean    @default(false)
-  businessAddress             String?
-  businessLatitude            Decimal?   @db.Decimal(10, 8)
-  businessLongitude           Decimal?   @db.Decimal(11, 8)
-  businessPhone               String?
-  businessEmail               String?
-  businessWebsite             String?
-  createdAt                   DateTime   @default(now())
-  updatedAt                   DateTime   @updatedAt
+  id                      BigInt   @id @default(autoincrement())
+  userId                  BigInt   @unique
+  businessName            String
+  businessDescription     String?
+  businessLogoUrl         String?
+  businessLicenseNumber   String?
+  businessLicenseVerified Boolean  @default(false)
+  businessAddress         String?
+  businessLatitude        Decimal? @db.Decimal(10, 8)
+  businessLongitude       Decimal? @db.Decimal(11, 8)
+  businessPhone           String?
+  businessEmail           String?
+  businessWebsite         String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
 
-  user                        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Service Service[]
 
   @@map("provider_profiles")
 }
@@ -60,15 +61,30 @@ enum Role {
 }
 
 model Category {
-  id          BigInt   @id @default(autoincrement())
+  id          BigInt    @id @default(autoincrement())
   name        String
   description String?
   iconUrl     String?
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
+  isActive    Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  Service     Service[]
 
   @@map("categories")
 }
 
+model Service {
+  id          BigInt   @id @default(autoincrement())
+  providerId  BigInt? // Make this optional
+  categoryId  BigInt
+  title       String
+  description String
+  price       Decimal?
+  priceUnit   String?
+  duration    Int?
+  isAvailable Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-
+  provider ProviderProfile? @relation(fields: [providerId], references: [id]) // Ensure provider relation is optional
+  category Category         @relation(fields: [categoryId], references: [id])
+}

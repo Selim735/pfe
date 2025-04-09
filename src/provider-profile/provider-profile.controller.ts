@@ -18,13 +18,13 @@ import { JwtGuard } from 'src/auth/jwt.guard';
 import { Roles } from 'src/auth/role.decorator';
 import { RolesGuard } from 'src/auth/roles.guard';
 
-@UseGuards(JwtGuard, RolesGuard) // <-- أضف RolesGuard لتتمكن من استخدام @Roles في أي route
+@UseGuards(JwtGuard, RolesGuard) 
 @Controller('provider-profile')
 export class ProviderProfileController {
   constructor(private readonly providerProfileService: ProviderProfileService) {}
 
   @Post()
-  @Roles('PROVIDER','ADMIN') // فقط مزودي الخدمة يستطيعون إنشاء ملف
+  @Roles('PROVIDER','ADMIN') 
   async create(@Body() dto: CreateProviderProfileDto, @Req() req) {
     const userId = req.user?.sub;
     return this.providerProfileService.create(BigInt(userId), dto);
