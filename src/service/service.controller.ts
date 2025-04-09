@@ -26,11 +26,13 @@ export class ServiceController {
     return this.serviceService.getServiceById(BigInt(id));
   }
 
+  @Roles('PROVIDER', 'ADMIN')
   @Put(':id')
   update(@Param('id') id: string, @Body() data: Partial<CreateServiceDto>) {
     return this.serviceService.updateService(BigInt(id), data);
   }
 
+  @Roles('PROVIDER', 'ADMIN')
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.serviceService.deleteService(BigInt(id));
