@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "categories" ALTER COLUMN "name" SET DATA TYPE TEXT,
+ALTER COLUMN "iconUrl" SET DATA TYPE TEXT;

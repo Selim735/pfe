@@ -118,6 +118,10 @@ export class AuthService {
     return Role.USER; // Default role
   }
 
+
+
+
+
   async login(dto: LoginDto) {
     // Implement rate limiting here (could use Redis)
 
@@ -139,22 +143,27 @@ export class AuthService {
     if (!valid) {
       throw new UnauthorizedException('Invalid credentials');
     }
-
     // Set appropriate token expiration and add more claims
     const token = this.jwtService.sign(
       {
-        sub: user.id.toString(),
+        sub: user.id.toString(), // ✅ sub يجب أن يكون string ليتوافق مع BigInt لاحقًا
         role: user.role,
         email: user.email
       },
       {
-        secret: this.configService.get<string>('JWT_SECRET'), // ✅ بدل JWT_SECRET_KEY
-        expiresIn: '1d', // Shorter expiration
+        secret: this.configService.get<string>('JWT_SECRET'),
+        expiresIn: '1d',
       }
     );
+    
 
     return { token };
   }
+
+
+
+
+
 
   async verifyEmail(token: string) {
     if (!token || typeof token !== 'string') {

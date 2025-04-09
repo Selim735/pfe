@@ -61,12 +61,14 @@ enum Role {
 
 model Category {
   id          BigInt   @id @default(autoincrement())
-  name        String   @db.VarChar(100)
+  name        String
   description String?
-  iconUrl     String?  @db.VarChar(255)
+  iconUrl     String?
   isActive    Boolean  @default(true)
   createdAt   DateTime @default(now())
 
   @@map("categories")
 }
+
+
 

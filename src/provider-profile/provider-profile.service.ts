@@ -23,9 +23,14 @@ export class ProviderProfileService {
   async create(userId: bigint, dto: CreateProviderProfileDto) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
-    if (!user || user.role !== 'PROVIDER') {
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (user.role !== 'PROVIDER') {
       throw new ForbiddenException('Only PROVIDERs can create a provider profile');
     }
+    
 
     const existingProfile = await this.prisma.providerProfile.findUnique({ where: { userId } });
     if (existingProfile) {
