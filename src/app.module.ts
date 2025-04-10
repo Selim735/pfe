@@ -8,9 +8,10 @@ import { ProviderProfileModule } from './provider-profile/provider-profile.modul
 import { PrismaModule } from './prisma/prisma.module';
 import { CategoryModule } from './category/category.module';
 import { ServiceModule } from './service/service.module';
+import { ServiceImageModule } from './service-image/service-image.module';
 
 @Module({
-  imports: [AuthModule, ProviderProfileModule, PrismaModule, CategoryModule, ServiceModule],
+  imports: [AuthModule, ProviderProfileModule, PrismaModule, CategoryModule, ServiceModule, ServiceImageModule],
   controllers: [AppController],
   providers: [AppService, PrismaService, MailService],
 })
