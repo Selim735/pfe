@@ -26,9 +26,11 @@ model User {
   lastLoginAt                 DateTime?
   isActive                    Boolean   @default(true)
 
-  providerProfile ProviderProfile?
-  Appointment     Appointment[]
-  Review          Review[]
+  providerProfile  ProviderProfile?
+  Appointment      Appointment[]
+  Review           Review[]
+  ChatConversation ChatConversation[]
+  ChatMessage      ChatMessage[]
 
   @@map("users")
 }
@@ -50,10 +52,11 @@ model ProviderProfile {
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
-  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Service     Service[]
-  Appointment Appointment[]
-  Review      Review[]
+  user             User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Service          Service[]
+  Appointment      Appointment[]
+  Review           Review[]
+  ChatConversation ChatConversation[]
 
   @@map("provider_profiles")
 }
@@ -89,11 +92,12 @@ model Service {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  provider     ProviderProfile? @relation(fields: [providerId], references: [id], onDelete: Cascade) // Ensure provider relation is optional
-  category     Category         @relation(fields: [categoryId], references: [id])
-  ServiceImage ServiceImage[]
-  Appointment  Appointment[]
-  Review       Review[]
+  provider         ProviderProfile?   @relation(fields: [providerId], references: [id], onDelete: Cascade) // Ensure provider relation is optional
+  category         Category           @relation(fields: [categoryId], references: [id])
+  ServiceImage     ServiceImage[]
+  Appointment      Appointment[]
+  Review           Review[]
+  ChatConversation ChatConversation[]
 }
 
 model ServiceImage {
@@ -140,7 +144,7 @@ model Review {
   userId     BigInt
   serviceId  BigInt
   providerId BigInt
-  rating     Int      // Ensure the range [1, 5] is validated in your application logic or database-level constraints.
+  rating     Int // Ensure the range [1, 5] is validated in your application logic or database-level constraints.
   comment    String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt // Ensure this is updated when the review is modified.
@@ -152,3 +156,30 @@ model Review {
   @@map("reviews")
 }
 
+model ChatConversation {
+  id         BigInt  @id @default(autoincrement())
+  userId     BigInt
+  providerId BigInt
+  serviceId  BigInt?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user     User            @relation(fields: [userId], references: [id])
+  provider ProviderProfile @relation(fields: [providerId], references: [id])
+  service  Service?        @relation(fields: [serviceId], references: [id])
+
+  messages ChatMessage[]
+}
+
+model ChatMessage {
+  id             BigInt   @id @default(autoincrement())
+  conversationId BigInt
+  senderId       BigInt
+  messageText    String
+  isRead         Boolean  @default(false)
+  createdAt      DateTime @default(now())
+
+  conversation ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sender       User             @relation(fields: [senderId], references: [id])
+}
