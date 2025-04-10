@@ -27,6 +27,7 @@ model User {
   isActive                    Boolean   @default(true)
 
   providerProfile ProviderProfile?
+  Appointment     Appointment[]
 
   @@map("users")
 }
@@ -48,8 +49,9 @@ model ProviderProfile {
   createdAt               DateTime @default(now())
   updatedAt               DateTime @updatedAt
 
-  user    User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  Service Service[]
+  user        User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Service     Service[]
+  Appointment Appointment[]
 
   @@map("provider_profiles")
 }
@@ -88,6 +90,7 @@ model Service {
   provider     ProviderProfile? @relation(fields: [providerId], references: [id], onDelete: Cascade) // Ensure provider relation is optional
   category     Category         @relation(fields: [categoryId], references: [id])
   ServiceImage ServiceImage[]
+  Appointment  Appointment[]
 }
 
 model ServiceImage {
@@ -100,4 +103,31 @@ model ServiceImage {
   service Service @relation(fields: [serviceId], references: [id], onDelete: Cascade)
 
   @@map("service_images")
+}
+
+model Appointment {
+  id              BigInt            @id @default(autoincrement())
+  userId          BigInt
+  serviceId       BigInt
+  providerId      BigInt
+  appointmentDate DateTime          
+  startTime       DateTime
+  endTime         DateTime
+  status          AppointmentStatus @default(pending)
+  notes           String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  service         Service         @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  providerProfile ProviderProfile @relation(fields: [providerId], references: [id], onDelete: Cascade)
+}
+
+enum AppointmentStatus {
+  pending
+  confirmed
+  completed
+  cancelled
+  rejected
 }
